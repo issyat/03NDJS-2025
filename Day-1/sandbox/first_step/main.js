@@ -1,4 +1,4 @@
-import { add, diff, prod, quot } from "./math.js";
+import  {add, diff, prod, quot } from './math.js';
 
 const a = 10;
 const b = 5;
