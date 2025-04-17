@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { model } from 'mongoose';
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -13,7 +13,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Password is required'],
     minlength: [6, 'Password must be at least 6 characters'],
-    select: false // Password prevented from being returned in queries 🔒
+    select: false,
+    validate: {
+      validator: function (value) {
+        return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/.test(value);
+      },
+      message: 'Password must include uppercase, lowercase, number, and special character'
+    }
   },
   isAdmin: {
     type: Boolean,
