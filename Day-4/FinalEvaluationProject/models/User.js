@@ -1,25 +1,25 @@
-// Importing Schema and model from mongoose to define a MongoDB schema and create a model
-import {Schema, model} from 'mongoose';
+import mongoose from 'mongoose';
 
-// Defining the schema for the User model
-const userSchema = new Schema({
-    // Email field: must be a string, required, and unique
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-    },
-    // Password field: must be a string and is required
-    password: {
-        type: String,
-        required: true,
-    },
-    // isAdmin field: boolean value to indicate if the user is an admin, defaults to false
-    isAdmin: {
-        type: Boolean,
-        default: false,
-    },
-}); 
+const userSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    required: [true, 'Email is required'],
+    unique: true,
+    lowercase: true,
+    trim: true,
+    match: [/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'Please use a valid email address']
+  },
+  password: {
+    type: String,
+    required: [true, 'Password is required'],
+    minlength: [6, 'Password must be at least 6 characters'],
+    select: false // Password prevented from being returned in queries 🔒
+  },
+  isAdmin: {
+    type: Boolean,
+    default: false
+  }
+});
 
 // Creating the User model using the defined schema
 const User = model('User', userSchema);
