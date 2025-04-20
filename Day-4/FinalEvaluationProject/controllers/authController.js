@@ -6,17 +6,16 @@ import { handleMongooseError } from '../utils/handleMongooseErrors.js';
 // Register User
 export const registerUser = async (req, res) => {
     const { email, password, isAdmin } = req.body;
-    const user = new User({ email, password, isAdmin });
 
     try {
-        // Validate user object before saving
-        await user.validate();
-
         // Check if user already exists
-        let existingUser = await User.findOne({ email });
+        const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: 'User already exists' });
         }
+
+        // Create new user
+        const user = new User({ email, password, isAdmin });
 
         // Generate salt and hash the password
         const salt = await bcrypt.genSalt(10);
@@ -28,6 +27,7 @@ export const registerUser = async (req, res) => {
 
         // Respond with the created user's details (don't send password)
         res.status(201).json({
+            message: 'User registered successfully',
             email: user.email,
             isAdmin: user.isAdmin,
             id: user._id,
@@ -37,6 +37,7 @@ export const registerUser = async (req, res) => {
         res.status(errorResponse.status).json(errorResponse);
     }
 };
+
 
 // Login User
 export const loginUser = async (req, res) => {
@@ -57,7 +58,10 @@ export const loginUser = async (req, res) => {
 
         // Generate a JWT token with user details and expiration time
         const token = jwt.sign({ userId: user._id, isAdmin: user.isAdmin }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.json({ token });
+        res.status(200).json({
+            message: 'Successfully logged in',
+            token
+        });
     } catch (err) {
         res.status(500).json({ message: 'Server error' });
     }

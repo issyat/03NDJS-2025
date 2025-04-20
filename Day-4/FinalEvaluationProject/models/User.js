@@ -16,7 +16,6 @@ const userSchema = new mongoose.Schema({
     select: false,
     match: [/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/, 'Password must include uppercase, lowercase, number, and special character'],
     maxlength: [32, 'Password must be at most 32 characters']
-    
   },
   isAdmin: {
     type: Boolean,
